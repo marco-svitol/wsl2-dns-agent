@@ -49,7 +49,7 @@ fn get_routes() -> Result<Vec<Route>, Error> {
             .collect::<Vec<_>>();
         FreeMibTable(transmute::<
             *mut MIB_IPFORWARD_TABLE2,
-            *const std::ffi::c_void
+            *const std::ffi::c_void,
         >(ptr));
         Ok(res)
     }
