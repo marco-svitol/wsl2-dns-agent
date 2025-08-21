@@ -174,27 +174,33 @@ pub fn get_configuration() -> Result<DnsConfiguration, Error> {
 
     // DNS priority is determined by interface metric
     // However we also want to exclude various system adapters such as WSL
-    // so we will filter out any adapters that don't have a route to the internet
-    let internet_adapters = get_adapters()?
+    // so we will include adapters that either:
+    //   - have a route to the internet
+    //   - or have DNS servers configured
+    let adapters = get_adapters()?;
+    let selected_adapters = adapters
         .into_iter()
         .filter(|adapter| {
-            internet_routes
+            // Adapter is selected if it has a route to the internet
+            let has_internet_route = internet_routes
                 .iter()
                 .any(|route| match route.destination_prefix_ip {
                     IpAddr::V4(_) => route.interface_index == adapter.ipv4_interface_index,
                     IpAddr::V6(_) => route.interface_index == adapter.ipv6_interface_index,
-                })
+                });
+            // Or if it has DNS servers configured
+            has_internet_route || !adapter.dns_servers.is_empty()
         })
         .sorted_by_key(Adapter::interface_metric)
         .collect::<Vec<_>>();
-    log::info!("Found adapters: {:?}", internet_adapters);
+    log::info!("Found adapters: {:?}", selected_adapters);
 
-    let servers = internet_adapters
+    let servers = selected_adapters
         .iter()
         .flat_map(|adapter| adapter.dns_servers.clone())
         .unique()
         .collect::<Vec<_>>();
-    let suffixes = internet_adapters
+    let suffixes = selected_adapters
         .iter()
         .flat_map(|adapter| adapter.dns_suffixes.clone())
         .unique()
