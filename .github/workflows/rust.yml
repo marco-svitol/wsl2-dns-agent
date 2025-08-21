@@ -50,10 +50,11 @@ jobs:
       - name: Run cargo sort
         run: cargo sort --workspace
 
-      - name: Check for changes
-        id: git-check
+      - name: Show updated Cargo.toml
         run: |
-          git diff --quiet || echo "changed=true" >> $GITHUB_OUTPUT
+          echo '--- Cargo.toml after cargo sort ---'
+          cat Cargo.toml
+          echo '--- End Cargo.toml ---'
 
       - name: Commit and push if needed
         if: steps.git-check.outputs.changed == 'true'
