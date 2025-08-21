@@ -28,10 +28,6 @@ jobs:
       - name: Cargo Clippy Check
         run: cargo clippy --all-features --workspace -- -D warnings
 
-      - name: Cargo Sort Check
-        run: cargo install cargo-sort --debug && cargo-sort --check --workspace
-
-
   cargo_sort_autofix:
     name: Cargo Sort Autofix
     runs-on: windows-latest

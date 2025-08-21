@@ -7,6 +7,7 @@ description = "An agent that automatically patches your WSL2 DNS configuration f
 repository = "https://github.com/marco-svitol/wsl2-dns-agent"
 homepage = "https://github.com/marco-svitol/wsl2-dns-agent"
 
+
 [dependencies]
 chrono = "0.4.19"
 configparser = "3.0.0"
