@@ -182,12 +182,13 @@ pub fn get_configuration() -> Result<DnsConfiguration, Error> {
         .into_iter()
         .filter(|adapter| {
             // Adapter is selected if it has a route to the internet
-            let has_internet_route = internet_routes
-                .iter()
-                .any(|route| match route.destination_prefix_ip {
-                    IpAddr::V4(_) => route.interface_index == adapter.ipv4_interface_index,
-                    IpAddr::V6(_) => route.interface_index == adapter.ipv6_interface_index,
-                });
+            let has_internet_route = 
+                internet_routes
+                    .iter()
+                    .any(|route| match route.destination_prefix_ip {
+                        IpAddr::V4(_) => route.interface_index == adapter.ipv4_interface_index,
+                        IpAddr::V6(_) => route.interface_index == adapter.ipv6_interface_index,
+                    });
             // Or if it has DNS servers configured
             has_internet_route || !adapter.dns_servers.is_empty()
         })
