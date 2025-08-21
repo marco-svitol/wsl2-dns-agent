@@ -4,8 +4,9 @@ version = "0.3.6"
 edition = "2021"
 license = "GPL-3.0"
 description = "An agent that automatically patches your WSL2 DNS configuration for users of Cisco AnyConnect (or similar VPNs)"
-repository = "https://github.com/jacob-pro/wsl2-dns-agent"
-homepage = "https://github.com/jacob-pro/wsl2-dns-agent"
+repository = "https://github.com/marco-svitol/wsl2-dns-agent"
+homepage = "https://github.com/marco-svitol/wsl2-dns-agent"
+
 
 [dependencies]
 chrono = "0.4.19"
@@ -29,5 +30,5 @@ features = [
     "Win32_System_LibraryLoader",
     "Win32_UI_WindowsAndMessaging",
     "Win32_UI_Shell",
-    "Win32_Graphics_Gdi"
+    "Win32_Graphics_Gdi",
 ]

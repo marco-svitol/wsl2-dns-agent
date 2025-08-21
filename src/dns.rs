@@ -47,7 +47,10 @@ fn get_routes() -> Result<Vec<Route>, Error> {
                 destination_prefix_len: row.DestinationPrefix.PrefixLength,
             })
             .collect::<Vec<_>>();
-        FreeMibTable(transmute(ptr));
+        FreeMibTable(transmute::<
+            *mut MIB_IPFORWARD_TABLE2,
+            *const std::ffi::c_void,
+        >(ptr));
         Ok(res)
     }
 }
@@ -83,7 +86,7 @@ fn get_adapters() -> Result<Vec<Adapter>, Error> {
             AF_UNSPEC,
             GET_ADAPTERS_ADDRESSES_FLAGS(0),
             null_mut(),
-            transmute(buffer.as_mut_ptr()),
+            transmute::<*mut u8, *mut IP_ADAPTER_ADDRESSES_LH>(buffer.as_mut_ptr()),
             &mut length,
         ));
         if e.is_err() {
@@ -182,12 +185,13 @@ pub fn get_configuration() -> Result<DnsConfiguration, Error> {
         .into_iter()
         .filter(|adapter| {
             // Adapter is selected if it has a route to the internet
-            let has_internet_route = internet_routes
-                .iter()
-                .any(|route| match route.destination_prefix_ip {
-                    IpAddr::V4(_) => route.interface_index == adapter.ipv4_interface_index,
-                    IpAddr::V6(_) => route.interface_index == adapter.ipv6_interface_index,
-                });
+            let has_internet_route =
+                internet_routes
+                    .iter()
+                    .any(|route| match route.destination_prefix_ip {
+                        IpAddr::V4(_) => route.interface_index == adapter.ipv4_interface_index,
+                        IpAddr::V6(_) => route.interface_index == adapter.ipv6_interface_index,
+                    });
             // Or if it has DNS servers configured
             has_internet_route || !adapter.dns_servers.is_empty()
         })
