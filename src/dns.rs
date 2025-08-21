@@ -182,7 +182,7 @@ pub fn get_configuration() -> Result<DnsConfiguration, Error> {
         .into_iter()
         .filter(|adapter| {
             // Adapter is selected if it has a route to the internet
-            let has_internet_route = 
+            let has_internet_route =
                 internet_routes
                     .iter()
                     .any(|route| match route.destination_prefix_ip {
